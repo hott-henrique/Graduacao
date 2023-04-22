@@ -21,4 +21,3 @@ d) Dada a matriz preenchida, imprima na tela os códigos dos cursos disponíveis
 (se houverem 20 alunos de 4 cursos diferentes, deve-se imprimir apenas 4 códigos e não 20 valores repetidos).
 Se a matriz estiver vazia, imprima uma mensagem informando o usuário.
 
-Entregue apenas o arquivo com extensão .c. Caso faça alguma suposição adicional sobre o problema, pode explicar inserindo comentários no código-fonte.
