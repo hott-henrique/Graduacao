@@ -1,0 +1,126 @@
+{
+    "engenharia de software": {
+        "definition": "É uma disciplina de engenharia que se preocupa com todos os aspectos de produção de software.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "software": {
+        "definition": "Softwares são programas de computador e documentação associada. Produtos de software podem ser desenvolvidos para um cliente específico ou para o mercado em geral.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "software legado": {
+        "definition": "Os sistemas legados são plataformas ou softwares que estão obsoletos, ou seja, estão dentro de uma companhia por muitos anos. ",
+        "source": "https://arphoenix.com.br/sistemas-legados-o-que-sao-e-porque-devo-atualiza-los/"
+    },
+
+    "dominio de aplicacao": {
+        "definition": "É definido por um conjunto de características que descrevem uma família de problemas para os quais uma determinada aplicação pretende dar solução.",
+        "source": "https://fluxodeinformacao.com/biblioteca/artigo/read/97190-o-que-e-o-dominio-de-uma-aplicacao"
+    },
+
+    "metodo agil": {
+        "definition": "Métodos ágeis ou metodologia ágil é um termo usado para descrever abordagens de desenvolvimento de software que enfatizam a entrega incremental, a colaboração da equipe, o planejamento contínuo e o aprendizado contínuo, em vez de tentar entregar tudo de uma vez perto do fim.",
+        "source": "https://controlf5it.com.br/blog/o-que-sao-metodos-ageis-de-desenvolvimento-de-software/"
+    },
+
+    "aplicações stand-alone": {
+        "definition": "Essas são as aplicações executadas em um computador local, como um PC. Elas contêm toda a funcionalidade necessária e não precisam estar conectadas a uma rede. Exemplos de tais aplicações são aplicativos de escritório em um PC, programas CAD, software de manipulação de fotos etc.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "aplicações interativas baseadas em transações": {
+        "definition": "São aplicações que executam em um computador remoto, acessadas pelos usuários a partir de seus computadores ou terminais. Certamente, aqui são incluídas aplicações Web como aplicações de comércio eletrônico em que você pode interagir com o sistema remoto para comprar produtos ou serviços. Essa classe de aplicações também inclui sistemas corporativos, em que uma empresa fornece acesso a seus sistemas através de um navegador Web ou um programa cliente especial e serviços baseados em nuvem, como é o caso de serviços de e-mail e compartilhamento de fotos. Aplicações interati- vas frequentemente incorporam um grande armazenamento de dados, que é acessado e atualizado em cada transação.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+    
+    "sistemas de controle embarcado": {
+        "definition": "São sistemas de controle que controlam e gerenciam dispositivos de hardware. Numericamente, é provável que haja mais sistemas embutidos do que de qualquer outro tipo. Exemplos de sistemas embutidos incluem software em telefone celular, softwares que controlam antitravamento de freios em um carro e software em um micro-ondas para controlar o processo de cozimento.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "sistemas de processamento em lotes (batch)": {
+        "definition": "São sistemas corporativos projetados para processar dados em grandes lotes. Eles processam grande número de entradas individuais para criar as saídas correspondentes. Exemplos dsistemas de lotes incluem sistemas periódicos de cobrança, como sistemas de cobrança telefônica, e sistemade pagamentos de salário.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "sistemas de entretenimento": {
+        "definition": "São sistemas cuja utilização principal é pessoal e cujo objetivo é entreter o usuário. A maioria desses sistemas é de jogos de diferentes tipos. A qualidade de interação com o usuário é a característica particular mais importante dos sistemas de entretenimento.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "sistemas para modelagem e simulação": {
+        "definition": "São sistemas que incluem vários objetos separados que interagem entre si, desenvolvidos por cientistas e engenheiros para modelar processos ou situações físicas. Esses sistemas geralmente fazem uso intensivo de recursos computacionais e requerem sistemas paralelos de alto desempenho para executar.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "sistemas de coleta de dados e análise": {
+        "definition": "São sistemas que coletam dados de seu ambiente com um conjunto de sensores e enviam esses dados para outros sistemas para processamento. O software precisa interagir com sensores e frequentemente é instalado em um ambiente hostil, por exemplo, dentro de uma máquina ou em um lugar remoto.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "sistemas de sistemas": {
+        "definition": "São sistemas compostos de uma série de outros sistemas de software. Alguns deles podem ser produtos genéricos de software, como um programa de planilha eletrônica. Outros sistemas do conjunto podem ser escritos especialmente para esse ambiente.",
+        "source": "SOMMERVILLE, Engenharia de Software, Pearson, 2003."
+    },
+
+    "estudo de viabilidade": {
+        "definition": "Fase em que é feita uma estimativa acerca da possibilidade de se satisfazerem as necessidades do usuário identificado usando-se tecnologias atuais de software e hardware.",
+        "source": "Slide"
+    },
+
+    "elicitação e análise de requisitos": {
+        "definition": "É o processo de derivação dos requisitos do sistema por meio da observação dos sistemas existentes, além de discussões com os potenciais usuários.",
+        "source": "Slide"
+    },
+
+    "especificação de requisitos": {
+        "definition": "É a atividade de traduzir as informações obtidas durante a atividade de análise em um documento que defina um conjunto de requisitos.",
+        "source": "Slide"
+    },
+
+    "validação de requisitos": {
+        "definition": "Atividade que verifica os requisitos quanto a realismo, consistência e completude.",
+        "source": "Slide"
+    },
+
+    "projeto de arquitetura": {
+        "definition": "Projeto no qual deve-se identificar a estrutura geral do sistema, os componentes principais seus relacionamentos e como eles são distribuídos.",
+        "source": "Slide"
+    },
+
+    "projeto de interface": {
+        "definition": "Etapa no qual você define as interfaces entre os componentes do sistema.",
+        "source": "Slide"
+    },
+
+    "projeto de componente": {
+        "definition": "Projeto no qual você toma cada componente do sistema e projeta seu funcionamento.",
+        "source": "Slide"
+    },
+
+    "projeto de banco de dados": {
+        "definition": "Projeto no qual você projeta as estruturas de dados do sistema e como eles devem ser representados em um banco de dados.",
+        "source": "Slide"
+    },
+
+    "testes de componente": {
+        "definition": "Os componentes do sistema são testados pelas pessoas que o desenvolveram",
+        "source": "Slide"
+    },
+
+    "testes de sistema": {
+        "definition": "Componentes do sistema são integrados para criar um sistema completo.",
+        "source": "Slide"
+    },
+
+    "testes de aceitação": {
+        "definition": "Esse é o estágio final do processo de testes, antes que o sistema seja aceito para uso operacional.",
+        "source": "Slide"
+    },
+
+    "": {
+        "definition": "",
+        "source": ""
+    }
+}

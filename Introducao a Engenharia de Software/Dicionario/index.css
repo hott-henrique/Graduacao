@@ -1,0 +1,67 @@
+@font-face {
+    font-family: "TheFont";
+    src: url("./TT\ Berlinerins\ Trial\ Grotesk.otf");
+}
+
+body {
+    background-color: lightblue;
+    font-family: "TheFont";
+}
+
+h1 {
+    text-align: center;
+    font-family: "TheFont";
+    font-size: 40px;
+}
+
+img {
+    width: 3%;
+    height: 3%;
+    vertical-align: middle;
+}
+
+input {
+    border: none;
+    background-color: bisque;
+    font-family: "TheFont";
+
+    font-size: 25px;
+    width: 90%;
+}
+
+input:focus {
+    outline: none;
+}
+
+span {
+    background-color: bisque;
+    padding: 5px 15px;
+    border-radius: 25px;
+    font-size: 30px;
+
+    display: table;
+    margin: 0 auto;
+}
+
+.result {
+    font-size: 35px;
+    padding-top: 5px;
+}
+
+.content {
+    max-width: 960px;
+    margin: auto;
+}
+
+li {
+    background-color: bisque;
+    border-radius: 25px;
+    list-style: none;
+    margin: 0%;
+    padding-left: 15px;
+    margin: 15px 0px 15px 0px;
+}
+
+ul {
+    padding: 0px;
+}
