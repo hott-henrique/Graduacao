@@ -1,2 +1,23 @@
-.venv
+# C ----------------------------------
+
+# Compiled program
 *.out
+
+# Object files
+*.o
+
+# Python -----------------------------
+
+# Enviroments
+.venv/
+
+# Cache
+__pycache__/
+
+# Common -----------------------------
+
+# Dir for local files
+.local/
+
+# Log files
+*.log
