@@ -1,23 +1,23 @@
-Considere o seguinte problema:
-- Os dados de alunos de um curso de graduação devem ser armazenados em uma matriz com 4 colunas do seguinte modo:
-    a coluna 1 deve conter a matrícula do aluno;
-    a coluna 2 deve ter o código do curso (número de 4 dígitos),
-    a coluna 3 deve conter o sexo do aluno,
-    e a coluna 4 deve conter o CR do aluno. 
+# Sistema de notas
 
-a) Faça um programa que crie uma matriz e leia esses dados para 20 alunos de uma universidade. 
+## Organização dos arquivos
 
-b) Faça um menu de opções em que o usuário pode escolher entre:
-    preencher a matriz,
-    visualizar a matriz,
-    visualizar a aluna com CR mais alto (ver letra c),
-    imprimir os cursos que estão na matriz (ver letra d)
-    e a opção de encerrar o programa.
+O programa deve estar organizado em apenas 1 arquivo:
+- main.c - Deve conter a função main a a lógica do sistema.
 
-c) Faça com que o programa leia o código de um curso
-    e retorne a matrícula e o CR da aluna (sexo feminino) que tiver o CR mais alto do curso informado.  
+## Especificação
 
-d) Dada a matriz preenchida, imprima na tela os códigos dos cursos disponíveis, mas sem repetir códigos
-(se houverem 20 alunos de 4 cursos diferentes, deve-se imprimir apenas 4 códigos e não 20 valores repetidos).
-Se a matriz estiver vazia, imprima uma mensagem informando o usuário.
+Elabore um programa em Linguagem C que armazene o dado de 20 alunos do em uma matriz de 4 colunas do seguindo modo:
 
+- A coluna 1 deve conter a matrícula do aluno.
+- A coluna 2 deve ter o código do curso (número de 4 dígitos).
+- A coluna 3 deve conter o sexo do aluno.
+- A coluna 4 deve conter o CR do aluno. 
+
+O programa deve ter o seguinte menu de opções:
+
+0. **Sair:** Deve finalizar a execução.
+1. **Preencher a matriz:** Deve solicitar ao usuário os dados para cada estudante.
+2. **Visualizar a matriz:** Deve imprimir a matriz preenchida de maneira legível ou indicar se houver algo errado.
+3. **Visualizar aluna com maior CR:** Deve solicitar o código de um curso e mostrar qual a aluna tem o CR mais alto e seu CR ou indicar se houver algo errado.
+4. **Imprimir cursos disponíveis:** Deve imprimir todos os cursos disponíveis sem duplicados ou indicar se houver algo errado.
