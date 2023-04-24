@@ -51,3 +51,12 @@ def ode_inhibitive_competition(t, y, k1, k2, k3, k4, k5) -> np.ndarray:
 
 	return np.array([ dSdt, dEdt, dIdt, dESdt, dEIdt, dPdt ])
 
+def ode_sirs(t, y, alpha, beta, gamma) -> np.ndarray:
+    S, I, R = y
+
+    dSdt = -beta * S * I + alpha * R
+    dIdt = beta * S * I - gamma * I
+    dRdt = gamma * I - alpha * R
+
+    return np.array([ dSdt, dIdt, dRdt ])
+
