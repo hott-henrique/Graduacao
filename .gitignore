@@ -11,6 +11,9 @@
 # Enviroments
 .venv/
 
+# Jupyter Notebook
+.ipynb_checkpoints/
+
 # Cache
 __pycache__/
 
