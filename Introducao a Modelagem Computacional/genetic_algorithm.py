@@ -126,7 +126,7 @@ class GeneticAlgorithm(object):
 # --------------------------------------------------------------------------------------
 
 def simulate_sirs(ode_params, *simulation_params):
-    ground_truth_data, steps, t_indices_pairing, initial_condition = simulation_params
+    experimental_data, steps, t_indices_pairing, initial_condition = simulation_params
 
     results = scipy.integrate.solve_ivp(
         fun=ode_sirs,
@@ -137,23 +137,29 @@ def simulate_sirs(ode_params, *simulation_params):
         method="RK45"
     )
 
-    S, I = results.y[[ 0, 1 ], :]
+    S, I, R = results.y[[ 0, 1, 2 ], :]
 
-    errorS, errorI = 0, 0
-    sumS, sumI = 0, 0
+    N = np.sum(initial_condition)
+
+    errorS, errorI, errorR = 0, 0, 0
+    sumS, sumI, sumR = 0, 0, 0
 
     for experimental_index, simulation_index in t_indices_pairing:
-        truthS = ground_truth_data[experimental_index][1]
-        truthI = ground_truth_data[experimental_index][2]
+        truthS = experimental_data[experimental_index][1]
+        truthI = experimental_data[experimental_index][2]
+        truthR = N - (truthS + truthI)
 
         errorS = errorS + np.float_power((S[simulation_index] - truthS), 2)
         errorI = errorI + np.float_power((I[simulation_index] - truthI), 2)
+        errorR = errorR + np.float_power((R[simulation_index] - truthR), 2)
 
         sumS = sumS + truthS
         sumI = sumI + truthI
+        sumR = sumR + truthR
 
     error = np.sqrt(errorS / sumS) \
-          + np.sqrt(errorI / sumI)
+          + np.sqrt(errorI / sumI) \
+          + np.sqrt(errorR / sumR)
 
     return error
 

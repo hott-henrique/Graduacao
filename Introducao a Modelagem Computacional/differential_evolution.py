@@ -1,9 +1,11 @@
+import argparse
+
 import numpy as np
 import scipy
 
 from odes import ode_sirs
 
-def simulate_ode(ode_params, *simulation_params):
+def simulate_sirs(ode_params, *simulation_params):
     ground_truth_data, steps, t_indices_pairing, initial_condition = simulation_params
 
     results = scipy.integrate.solve_ivp(
@@ -15,67 +17,76 @@ def simulate_ode(ode_params, *simulation_params):
         method="RK45"
     )
 
-    S, I = results.y[[ 0, 1 ], :]
+    S, I, R = results.y[[ 0, 1, 2 ], :]
 
-    errorS, errorI = 0, 0
-    sumS, sumI = 0, 0
+    N = np.sum(initial_condition)
+
+    errorS, errorI, errorR = 0, 0, 0
+    sumS, sumI, sumR = 0, 0, 0
 
     for experimental_index, simulation_index in t_indices_pairing:
         truthS = ground_truth_data[experimental_index][1]
         truthI = ground_truth_data[experimental_index][2]
+        truthR = N - (truthS + truthI)
 
         errorS = errorS + np.float_power((S[simulation_index] - truthS), 2)
         errorI = errorI + np.float_power((I[simulation_index] - truthI), 2)
+        errorR = errorR + np.float_power((R[simulation_index] - truthR), 2)
 
         sumS = sumS + truthS
         sumI = sumI + truthI
+        sumR = sumR + truthR
 
     error = np.sqrt(errorS / sumS) \
-          + np.sqrt(errorI / sumI)
+          + np.sqrt(errorI / sumI) \
+          + np.sqrt(errorR / sumR)
 
     return error
 
-if __name__ == "__main__":
-    ground_truth_data = np.loadtxt(".local/parameter_adjustment_data.csv", delimiter=',')
+def get_pairing_indices(A: np.ndarray, B: np.ndarray, tolerance: float = np.power(1/10, 2)):
+    pairing_indices = list()
+
+    search_starting_point = 0
+
+    for i, valueA in enumerate(A):
+        for j in range(search_starting_point, len(B)):
+            valueB = B[j]
+
+            if np.abs(valueA - valueB) < tolerance:
+                pairing_indices.append((i, j))
+                search_starting_point = j + 1
+                break
+
+    pairing_indices = np.array(pairing_indices)
+
+    return pairing_indices
+
+
+def main(experimental_data_file_path: str):
+    experimental_data = np.loadtxt(experimental_data_file_path, delimiter=',')
 
     tf, dt = 10, 0.01
 
     simulation_timestamps = np.arange(0, tf + dt, dt)
 
-    t_indices_pairing = list()
-
-    search_starting_point = 0
-
-    for i, t_experimental in enumerate(ground_truth_data[:, 0]):
-
-        for j in range(search_starting_point, len(simulation_timestamps)):
-            t_simulation = simulation_timestamps[j]
-
-            if np.abs(t_experimental - t_simulation) <= dt:
-                t_indices_pairing.append((i, j))
-                search_starting_point = j + 1
-                break
-
-    t_indices_pairing = np.array(t_indices_pairing)
-
     simulation_params = (
-        ground_truth_data,
+        experimental_data,
         simulation_timestamps,
-        t_indices_pairing,
+        get_pairing_indices(experimental_data[:, 0], simulation_timestamps, dt),
         np.array([ 995, 5, 0 ], dtype=np.float64)
     )
 
-    bounds = [ (0.1, 0.3), (0.01, 0.02), (0.5, 1) ]
+    bounds = [ (0.01, 1.0), (0.01, 1.0), (0.1, 1.0) ]
 
     solution = scipy.optimize.differential_evolution(
-        func=simulate_ode,
+        func=simulate_sirs,
         args=simulation_params,
         bounds=bounds,
         strategy="best1bin",
-        maxiter=30,
-        popsize=80,
-        atol=10**(-3),
-        tol=10**(-3),
+        maxiter=100,
+        popsize=100,
+        atol=0.0001,
+        tol=0.0001,
         mutation=0.8,
         recombination=0.5,
         workers=4,
@@ -84,9 +95,22 @@ if __name__ == "__main__":
     )
 
     best_params = solution.x
-    error = simulate_ode(best_params, *simulation_params)
+    error = simulate_sirs(best_params, *simulation_params)
 
     print(f"Best Solution: {best_params}")
     print(f"Error: {error}")
     print(f"{solution.message}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--experimental-data",
+        help="Path to experimental data for SIRS ode model.",
+        required=True
+    )
+
+    args = parser.parse_args()
+
+    main(experimental_data_file_path=args.experimental_data)
 
