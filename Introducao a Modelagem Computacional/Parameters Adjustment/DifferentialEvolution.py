@@ -33,9 +33,9 @@ def simulate_sirs(ode_params, *simulation_params):
         errorI = errorI + np.float_power((I[simulation_index] - truthI), 2)
         errorR = errorR + np.float_power((R[simulation_index] - truthR), 2)
 
-        sumS = sumS + truthS
-        sumI = sumI + truthI
-        sumR = sumR + truthR
+        sumS = sumS + np.float_power(truthS, 2)
+        sumI = sumI + np.float_power(truthI, 2)
+        sumR = sumR + np.float_power(truthR, 2)
 
     error = np.sqrt(errorS / sumS) \
           + np.sqrt(errorI / sumI) \
@@ -97,9 +97,8 @@ def main(experimental_data_file_path: str):
     best_params = solution.x
     error = simulate_sirs(best_params, *simulation_params)
 
-    print(f"Best Solution: {best_params}")
-    print(f"Error: {error}")
-    print(f"{solution.message}")
+    with open("de.parameters") as f:
+        print(' '.join([ str(v) for v in best_params ]), file=f)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -8,47 +8,44 @@ from odes import ode_sirs
 
 class GeneticAlgorithm(object):
 
-    def __init__(self, bounds: list[tuple], func, args):
+    def __init__(self, bounds: "list[tuple]", func, args, **kwargs):
         self.bounds = bounds
         self.n_genes = len(bounds)
 
-        self.fitness_func = lambda individual: func(individual, *args)
+        self.fitness_as_error = kwargs.get("fitness_as_error", False)
+
+        factor = 1 if not self.fitness_as_error else -1
+
+        self.fitness_func = lambda individual: factor * func(individual, *args)
 
     def evolution(self, P: int, G: int, mutation: float):
         assert mutation >= 0.0 and mutation <= 1.0
 
         population = self.generate_random_population(P)
 
-        best_individual_of_each_generation = list()
-
         for g in range(G):
+            fitness_population = np.apply_along_axis(
+                func1d=self.fitness_func,
+                axis=1,
+                arr=population
+            )
+
+            i = np.argmax(fitness_population)
+
+            individual = np.copy(population[i])
+            fitness = fitness_population[i]
+
             population = self.crossover(population)
 
             self.mutate(population, probability=mutation)
 
-            population, fitness_population = self.roulette_wheel_selection(population)
+            population = self.roulette_wheel_selection(population, fitness_population)
 
-            i = np.argmin(fitness_population)
+            population[0] = individual
 
-            best_individual_of_each_generation.append(np.copy(population[i]))
+            print(f"Generation {g + 1}: f(x)= {np.abs(fitness)}")
 
-            print(f"Generation {g + 1}({np.mean(fitness_population)}): ({list(population[i])}, {fitness_population[i]})")
-
-        best_individual_of_each_generation = np.array(best_individual_of_each_generation)
-
-        fitness_best_individual_of_each_generation = np.apply_along_axis(
-            func1d=self.fitness_func,
-            axis=1,
-            arr=best_individual_of_each_generation
-        )
-
-        best_individual = np.argmin(fitness_best_individual_of_each_generation)
-
-        individual = best_individual_of_each_generation[best_individual]
-        fitness = fitness_best_individual_of_each_generation[best_individual]
-
-
-        return individual, fitness
+        return population[0], fitness
 
     def generate_random_population(self, P: int):
         genes = np.array([ np.linspace(low, high, num=P) for low, high in self.bounds ])
@@ -60,30 +57,26 @@ class GeneticAlgorithm(object):
 
         return population
 
-    def roulette_wheel_selection(self, population: np.ndarray):
-        """
-        Select P individuals with probabilty: 
-            1 - (fitness(individual) / Summation(fitness(population)))
-        Where fitness represents an error. So we aim to minimize it.
-        """
-        fitness_population = np.apply_along_axis(func1d=self.fitness_func, axis=1, arr=population)
-
+    def roulette_wheel_selection(self, population: np.ndarray, fitness_population: np.ndarray):
         F = np.sum(fitness_population)
 
         new_population = list()
-        fitness_new_population = list()
+
+        p: callable
+
+        if self.fitness_as_error:
+            p = lambda fitness: 1 - (fitness / F)
+        else:
+            p = lambda fitness: (fitness / F)
 
         i = 0
         while len(new_population) < len(population):
             individual, fitness = population[i], fitness_population[i]
 
-            Pi = 1.0 - (fitness / F)
-
-            if np.random.random() > Pi:
+            if np.random.random() > p(fitness):
                 continue
 
             new_population.append(individual)
-            fitness_new_population.append(fitness)
 
             i = i + 1
 
@@ -91,9 +84,8 @@ class GeneticAlgorithm(object):
                 i = 0
 
         new_population = np.array(new_population)
-        fitness_new_population = np.array(fitness_new_population)
 
-        return new_population, fitness_new_population
+        return new_population
 
     def crossover(self, population: np.ndarray):
         P = len(population)
@@ -153,9 +145,9 @@ def simulate_sirs(ode_params, *simulation_params):
         errorI = errorI + np.float_power((I[simulation_index] - truthI), 2)
         errorR = errorR + np.float_power((R[simulation_index] - truthR), 2)
 
-        sumS = sumS + truthS
-        sumI = sumI + truthI
-        sumR = sumR + truthR
+        sumS = sumS + np.float_power(truthS, 2)
+        sumI = sumI + np.float_power(truthI, 2)
+        sumR = sumR + np.float_power(truthR, 2)
 
     error = np.sqrt(errorS / sumS) \
           + np.sqrt(errorI / sumI) \
@@ -195,11 +187,17 @@ def main(experimental_data_file_path: str):
         np.array([ 995, 5, 0 ], dtype=np.float64)
     )
 
-    ga = GeneticAlgorithm([ (0.01, 1), (0.01, 1), (0.01, 1) ], simulate_sirs, simulation_params)
+    ga = GeneticAlgorithm(
+        [ (0.01, 1), (0.01, 1), (0.01, 1) ],
+        simulate_sirs,
+        simulation_params,
+        fitness_as_error=True
+    )
 
-    individual, error = ga.evolution(P=20, G=80, mutation=0.3)
+    best_params, error = ga.evolution(P=20, G=80, mutation=0.3)
 
-    print(f"Best individual of evolution: {individual} | Fitness: {error}")
+    with open("ga.parameters", 'w') as f:
+        print(' '.join([ str(v) for v in best_params ]), file=f)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
