@@ -1,5 +1,3 @@
-import argparse
-
 from io import StringIO
 
 import numpy as np
@@ -55,72 +53,9 @@ def plot(simulation_data: tuple[np.ndarray, np.ndarray], output_file: str, **kwa
 
     fig.savefig(output_file)
 
-def main(**kwargs):
+def plot_csv(**kwargs):
     plot(
         simulation_data=load_simulation(kwargs.pop("csv_file")),
         output_file=kwargs.pop("output_file"),
         **kwargs if kwargs else dict()
     )
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--csv-file",
-        type=str,
-        required=False,
-        default='',
-        help="File to read csv. " \
-             "If not specified, read from stding untill EOF."
-    )
-
-    parser.add_argument("--output-file", type=str, required=True)
-
-    parser.add_argument(
-        "--title",
-        type=str,
-        required=False
-    )
-
-    parser.add_argument(
-        "--xlabel",
-        type=str,
-        required=False
-    )
-
-    parser.add_argument(
-        "--ylabel",
-        type=str,
-        required=False
-    )
-
-    parser.add_argument("--labels",
-        type=str,
-        nargs="*",
-        required=False,
-        help="Label for each line in plot. " \
-             "If specified, it must have one element for each column in file, " \
-             "even if not ploting all columns."
-    )
-
-    parser.add_argument(
-        "--columns",
-        type=int,
-        nargs="*",
-        required=False,
-        default=list(),
-        help="Plot only specified columns."
-    )
-
-    args = parser.parse_args()
-
-    main(
-        csv_file=args.csv_file,
-        output_file=args.output_file,
-        title=args.title,
-        xlabel=args.xlabel,
-        ylabel=args.ylabel,
-        labels=args.labels,
-        columns=args.columns,
-    )
-

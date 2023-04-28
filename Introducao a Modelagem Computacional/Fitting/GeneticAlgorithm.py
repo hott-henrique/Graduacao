@@ -1,9 +1,10 @@
 import argparse
 
 import numpy as np
-import scipy
 
-from odes import ode_sirs
+from ODEs.base import ODE
+from ODEs.SIRS import SIRS
+from Solvers import *
 
 
 class GeneticAlgorithm(object):
@@ -23,6 +24,8 @@ class GeneticAlgorithm(object):
 
         population = self.generate_random_population(P)
 
+        best_fitness = np.inf if self.fitness_as_error else 0
+
         for g in range(G):
             fitness_population = np.apply_along_axis(
                 func1d=self.fitness_func,
@@ -33,7 +36,7 @@ class GeneticAlgorithm(object):
             i = np.argmax(fitness_population)
 
             individual = np.copy(population[i])
-            fitness = fitness_population[i]
+            best_fitness = fitness_population[i]
 
             population = self.crossover(population)
 
@@ -43,9 +46,9 @@ class GeneticAlgorithm(object):
 
             population[0] = individual
 
-            print(f"Generation {g + 1}: f(x)= {np.abs(fitness)}")
+            print(f"Generation {g + 1}: f(x)= {np.abs(best_fitness)}")
 
-        return population[0], fitness
+        return population[0], best_fitness
 
     def generate_random_population(self, P: int):
         genes = np.array([ np.linspace(low, high, num=P) for low, high in self.bounds ])
@@ -62,12 +65,10 @@ class GeneticAlgorithm(object):
 
         new_population = list()
 
-        p: callable
+        p = lambda fitness: (fitness / F)
 
         if self.fitness_as_error:
             p = lambda fitness: 1 - (fitness / F)
-        else:
-            p = lambda fitness: (fitness / F)
 
         i = 0
         while len(new_population) < len(population):
@@ -117,44 +118,6 @@ class GeneticAlgorithm(object):
 
 # --------------------------------------------------------------------------------------
 
-def simulate_sirs(ode_params, *simulation_params):
-    experimental_data, steps, t_indices_pairing, initial_condition = simulation_params
-
-    results = scipy.integrate.solve_ivp(
-        fun=ode_sirs,
-        args=ode_params,
-        t_span=(0, np.max(steps)),
-        y0=initial_condition,
-        t_eval=steps,
-        method="RK45"
-    )
-
-    S, I, R = results.y[[ 0, 1, 2 ], :]
-
-    N = np.sum(initial_condition)
-
-    errorS, errorI, errorR = 0, 0, 0
-    sumS, sumI, sumR = 0, 0, 0
-
-    for experimental_index, simulation_index in t_indices_pairing:
-        truthS = experimental_data[experimental_index][1]
-        truthI = experimental_data[experimental_index][2]
-        truthR = N - (truthS + truthI)
-
-        errorS = errorS + np.float_power((S[simulation_index] - truthS), 2)
-        errorI = errorI + np.float_power((I[simulation_index] - truthI), 2)
-        errorR = errorR + np.float_power((R[simulation_index] - truthR), 2)
-
-        sumS = sumS + np.float_power(truthS, 2)
-        sumI = sumI + np.float_power(truthI, 2)
-        sumR = sumR + np.float_power(truthR, 2)
-
-    error = np.sqrt(errorS / sumS) \
-          + np.sqrt(errorI / sumI) \
-          + np.sqrt(errorR / sumR)
-
-    return error
-
 def get_pairing_indices(A: np.ndarray, B: np.ndarray, tolerance: float = np.power(1/10, 2)):
     pairing_indices = list()
 
@@ -173,28 +136,61 @@ def get_pairing_indices(A: np.ndarray, B: np.ndarray, tolerance: float = np.powe
 
     return pairing_indices
 
+
+def simulate(ode: ODE, ode_parameters: np.ndarray, *simulation_params):
+    experimental_data, tf, dt, solver = simulation_params
+
+    steps, results = ode.simulate(
+        tf=tf,
+        dt=dt,
+        solver=solver,
+        ode_parameters=ode_parameters,
+    )
+
+    for row in results:
+        row: np.ndarray = row
+
+        if np.any(np.isnan(row)):
+            return np.inf
+
+    pairing_indices = get_pairing_indices(experimental_data[:, 0], steps)
+
+    experimental_indices = pairing_indices[:, 0]
+    simulation_indices = pairing_indices[:, 1]
+
+    e = ode.calculate_error(
+        experimental_data=experimental_data[:, 1:][experimental_indices],
+        simulation_data=results[:, simulation_indices].T
+    )
+
+    return e
+
 def main(experimental_data_file_path: str):
     experimental_data = np.loadtxt(experimental_data_file_path, delimiter=',')
 
+    solver = euler
+    solver = rk4
+    solver = solve_ivp
+
     tf, dt = 10, 0.01
-
-    simulation_timestamps = np.arange(0, tf + dt, dt)
-
     simulation_params = (
         experimental_data,
-        simulation_timestamps,
-        get_pairing_indices(experimental_data[:, 0], simulation_timestamps, dt),
-        np.array([ 995, 5, 0 ], dtype=np.float64)
+        tf,
+        dt,
+        solver
     )
 
+    ode = SIRS(initial_condition=np.array([ 995, 5, 0 ], dtype=np.float64))
+
     ga = GeneticAlgorithm(
-        [ (0.01, 1), (0.01, 1), (0.01, 1) ],
-        simulate_sirs,
-        simulation_params,
+        bounds=[ (0.01, 1), (0.01, 1), (0.01, 1) ],
+        func=lambda ode_params, *args: simulate(ode, ode_params, *args),
+        ode=ode,
+        args=simulation_params,
         fitness_as_error=True
     )
 
-    best_params, error = ga.evolution(P=20, G=80, mutation=0.3)
+    best_params, _ = ga.evolution(P=2, G=3, mutation=0.3)
 
     with open("ga.parameters", 'w') as f:
         print(' '.join([ str(v) for v in best_params ]), file=f)

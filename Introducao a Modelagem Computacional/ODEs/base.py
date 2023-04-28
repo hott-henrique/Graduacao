@@ -13,7 +13,7 @@ class ODE(ABC):
     def do_step(self, *args, **kwargs) -> np.ndarray:
         pass
 
-    def simulate(self, tf, dt, solver, ode_parameters: list = list()) -> tuple[np.ndarray, np.ndarray]:
+    def simulate(self, tf, dt, solver, ode_parameters: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         if self.initial_condition is None:
             raise Exception("Impossible to simulate ODE without initial condition.")
 
@@ -32,7 +32,7 @@ class ODE(ABC):
 
         return steps, y
 
-    def calculate_errors(self, experimental_data: np.ndarray, simulation_data: np.ndarray):
+    def calculate_error(self, experimental_data: np.ndarray, simulation_data: np.ndarray) -> np.float64:
         errors = np.zeros(shape=experimental_data.shape[1])
         exacts = np.zeros(shape=experimental_data.shape[1])
 

@@ -6,6 +6,7 @@ python3 "$1".py --experimental-data data.csv \
     | paste -d '' - - \
     > "$1"_output.csv
 
-sed -i "s/:/,/g" "$1"_output.csv
+sed -i "s/:/,/g" ".local/$1"_output.csv
 
 echo "Finished executing $1.py"
+
