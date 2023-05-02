@@ -37,9 +37,9 @@ def b_plot(simulation_data: tuple[np.ndarray, np.ndarray], output_file: str):
     ax.grid()
 
     ax.set(
-        title="Inhibitive Competition",
-        xlabel="Time (Days)",
-        ylabel="Amounts",
+        title="Modelo de Competição Inibidora",
+        xlabel="Tempo",
+        ylabel="Quantidades",
     )
 
     labels = [ 'S', 'E', 'I', "ES", "EI", 'P' ]
