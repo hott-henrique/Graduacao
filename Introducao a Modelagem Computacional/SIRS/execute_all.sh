@@ -16,7 +16,7 @@ if [ "$1" = "fit" ]; then
 				--output-file ".local/ga_errors.png"
 
 	echo "Running fitting with Differential Evolution ..."
- 
+
 	python3 fit.py de \
 			--experimental-data ./.local/experimental_data.csv \
 			--y0 995 5 0 \
@@ -57,4 +57,3 @@ python3 simulate.py \
 		--output-file ".local/de_best_params_simulation.png" && xdg-open ".local/de_best_params_simulation.png"
 
 # cp .local/*.png .local/*.parameters ~/Documents/Latex/IMC-TP4/assets/
-

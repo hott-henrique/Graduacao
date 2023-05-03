@@ -1,7 +1,5 @@
 import numpy as np
 
-import tqdm
-
 
 class GeneticAlgorithm(object):
 
@@ -22,7 +20,7 @@ class GeneticAlgorithm(object):
 
         best_fitness = np.inf if self.fitness_as_error else 0
 
-        for g in tqdm.tqdm(range(G)):
+        for g in range(G):
             fitness_population = np.apply_along_axis(
                 func1d=self.fitness_func,
                 axis=1,
