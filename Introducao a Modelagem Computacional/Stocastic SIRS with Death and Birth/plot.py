@@ -1,3 +1,4 @@
+import argparse, os
 from io import StringIO
 
 import numpy as np
@@ -22,61 +23,75 @@ def PIPE() -> list[StringIO]:
 
     return container
 
-csv_s: list[StringIO] = PIPE()
+def calculate_average(simulations: list[np.ndarray]):
+    N = simulations[0].shape[0]
+    for i in range(1, len(simulations)):
+        m = simulations[i].shape[0]
 
-sims, n = list(), 0
+        if m < N:
+            N = m
 
-for file in csv_s:
-    data = np.loadtxt(file, delimiter=',')
+    avgt = np.zeros(shape=N)
+    avgS = np.zeros(shape=N)
+    avgI = np.zeros(shape=N)
+    avgR = np.zeros(shape=N)
 
-    if len(data) > n:
-        n = len(data)
+    for s in simulations:
+        avgt = avgt + s[:N, 0]
+        avgS = avgS + s[:N, 1]
+        avgI = avgI + s[:N, 2]
+        avgR = avgR + s[:N, 3]
 
-    sims.append(data)
+    avgt = avgt / len(simulations)
+    avgS = avgS / len(simulations)
+    avgI = avgI / len(simulations)
+    avgR = avgR / len(simulations)
 
-expanded_sims = list()
+    return avgt, avgS, avgI, avgR
 
-for data in sims:
-    diff = n - data.shape[0]
+def plot(output_file: str):
+    csv_s: list[StringIO] = PIPE()
 
-    missing = np.full(shape=(diff, 4), fill_value=data[-1])
+    simulations = [ np.loadtxt(file, delimiter=',') for file in csv_s ]
 
-    expanded_sims.append(np.vstack([ data, missing ]))
+    fig, ax = plt.subplots(nrows=1, ncols=3)
 
-# Three dimensional matrix: Array of 2D Matrices representing a simulation.
+    fig.set_size_inches((14, 6))
 
-# simulations = np.array([ np.loadtxt(f, delimiter=',') for f in csv_s ])
-simulations = np.array(expanded_sims)
+    color_sim = 0.0
 
-#   Tranposing it pull apart each component of simulation in a different matrix,
-# where each row of the inner matrices represent an instant in time, and the each value
-# corresponde to its simulation. Example with four simulations:
-# [ [ 0, 0, 0, 0 ]
-#   [ 1, 1, 1, 1 ]
-#   [ 2, 2, 2, 2 ]
-#   [ 3, 3, 3, 3 ] ]
-# The time matrix, each column is a simulation and each row is an instant in time.
-transposed = simulations.transpose()
+    for s in simulations:
+        steps = s[:, 0]
 
-# Remove the time matrix.
-data = np.array([ transposed[i] for i in range(1, len(transposed))])
+        ax[0].plot(steps, s[:, 1], color=(color_sim, color_sim, color_sim))
+        ax[1].plot(steps, s[:, 2], color=(color_sim, color_sim, color_sim))
+        ax[2].plot(steps, s[:, 3], color=(color_sim, color_sim, color_sim))
 
-# Two dimensional matrix: row compoment mean over time.
-# Example: m[0][0] - Mean of S in the first iteration.
-m, s = np.mean(data, axis=2), np.std(data, axis=2)
+        ax[0].set_title("[ S ]")
+        ax[1].set_title("[ I ]")
+        ax[2].set_title("[ R ]")
 
-# PLOTTING --------------------------------------------------
 
-fig, ax = plt.subplots(nrows=1, ncols=3)
+        color_sim += 0.125
 
-fig.set_size_inches((10, 6))
+    avgt, avgS, avgI, avgR = calculate_average(simulations)
 
-for s in simulations:
-    steps = s[:, 0]
+    ax[0].plot(avgt, avgS, color='r')
+    ax[1].plot(avgt, avgI, color='r')
+    ax[2].plot(avgt, avgR, color='r')
 
-    for i in range(1, s.shape[1]):
-        ax[i - 1].plot(steps, s[:, i])
+    fig.savefig(output_file)
 
-fig.savefig("test.png")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
 
+    parser.add_argument("--output-file", required=True)
+
+    args = parser.parse_args()
+
+    dirs = os.path.dirname(args.output_file)
+    if dirs:
+        os.makedirs(dirs, exist_ok=True)
+
+    plot(args.output_file)
 
