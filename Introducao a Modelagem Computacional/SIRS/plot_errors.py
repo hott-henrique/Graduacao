@@ -37,9 +37,9 @@ def plot(simulation_data: tuple[np.ndarray, np.ndarray], output_file: str):
     ax.grid()
 
     ax.set(
-        title="Errors over Time",
-        xlabel="Time (Days)",
-        ylabel="Error",
+        title="Evoluçao do Erro do Algortimo de Ajuste",
+        xlabel="Iterações",
+        ylabel="Erro",
     )
 
     for i, y in enumerate(simulation):

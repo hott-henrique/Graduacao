@@ -55,23 +55,14 @@ def plot(
         ax.grid()
 
         ax.set(
-            xlabel="Time (Days)",
-            ylabel="Amount",
+            xlabel="Tempo",
+            ylabel=f"[ {labels[i - 1]} ]",
         )
 
-        ax.set_ylabel(f"[ {labels[i - 1]} ]")
+        # ax.set_ylabel(f"[ {labels[i - 1]} ]")
 
         ax.plot(steps, simulation[i - 1], color=(0/255, 0/255, 255/255))
-        ax.plot(experimental_data[:, 0], experimental_data[:, i], 'd', label="Experimental Data", color=(1.0, 0.0, 0.0))
-
-        xticks = np.arange(start=0, stop=len(experimental_data), step=1)
-        yticks = np.arange(start=0, stop=N + 100, step=100)
-
-        ax.set_xticks(xticks)
-        ax.set_yticks(yticks)
-
-        ax.set_xlim(0, np.max(xticks))
-        ax.set_ylim(0, np.max(yticks))
+        ax.plot(experimental_data[:, 0], experimental_data[:, i], 'd', label="Dado Experimental", color=(1.0, 0.0, 0.0))
 
         ax.legend()
 
